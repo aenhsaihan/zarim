@@ -83,6 +83,12 @@ contract("Token", ([deployer, receiver]) => {
         await token
           .transfer(receiver, invalidAmount, { from: deployer })
           .should.be.rejectedWith(EVM_REVERT);
+
+        // Reject transfer since receiver has no tokens to send
+        invalidAmount = tokens(100);
+        await token
+          .transfer(deployer, invalidAmount, { from: receiver })
+          .should.be.rejectedWith(EVM_REVERT);
       });
     });
   });
