@@ -76,5 +76,16 @@ contract("Token", ([deployer, receiver]) => {
           .should.equal(amount.toString(), "value is correct");
       });
     });
+
+    describe("failure", async () => {
+      it("rejects insufficient balances", async () => {
+        let invalidAmount = tokens(100000000);
+        await token
+          .transfer(receiver, invalidAmount, { from: deployer })
+          .should.be.rejectedWith(
+            "VM Exception while processing transaction: revert"
+          );
+      });
+    });
   });
 });
