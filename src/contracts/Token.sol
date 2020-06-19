@@ -12,6 +12,8 @@ contract Token {
 
     mapping(address => uint256) public balanceOf;
 
+    event Transfer(address indexed from, address indexed to, uint256 value);
+
     constructor() public {
         totalSupply = 1000000 * (10**decimals);
         balanceOf[msg.sender] = totalSupply;
@@ -23,6 +25,7 @@ contract Token {
     {
         balanceOf[msg.sender] = balanceOf[msg.sender].sub(_value);
         balanceOf[_to] = balanceOf[_to].add(_value);
+        emit Transfer(msg.sender, _to, _value);
         return true;
     }
 }
