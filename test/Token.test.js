@@ -124,6 +124,10 @@ contract("Token", ([deployer, receiver, exchange]) => {
       });
     });
 
-    describe("failure", () => {});
+    describe("failure", () => {
+      it("rejects invalid spenders", async () => {
+        await token.approve(0x0, amount, { from: deployer }).should.be.rejected;
+      });
+    });
   });
 });

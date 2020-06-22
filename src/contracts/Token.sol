@@ -45,6 +45,7 @@ contract Token {
         public
         returns (bool success)
     {
+        require(_spender != address(0), "Recipient address is invalid");
         allowance[msg.sender][_spender] = _value;
         emit Approval(msg.sender, _spender, _value);
         return true;
