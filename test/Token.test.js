@@ -6,7 +6,7 @@ require("chai")
   .use(require("chai-as-promised"))
   .should();
 
-contract("Token", ([deployer, receiver]) => {
+contract("Token", ([deployer, receiver, exchange]) => {
   const name = "Zarim";
   const symbol = "ZRM";
   const decimals = "18";
@@ -96,5 +96,23 @@ contract("Token", ([deployer, receiver]) => {
           .rejected;
       });
     });
+  });
+
+  describe("approving tokens", () => {
+    let result, amount;
+
+    beforeEach(async () => {
+      amount = tokens(100);
+      result = await token.approve(exchange, amount, { from: deployer });
+    });
+
+    describe("success", () => {
+      it("allocates an allowance for delegated token spending on exchange", async () => {
+        const allowance = await token.allowance(deployer, exchange);
+        allowance.toString().should.equal(amount.toString());
+      });
+    });
+
+    describe("failure", () => {});
   });
 });

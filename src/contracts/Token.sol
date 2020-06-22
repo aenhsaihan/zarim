@@ -11,6 +11,7 @@ contract Token {
     uint256 public totalSupply;
 
     mapping(address => uint256) public balanceOf;
+    mapping(address => mapping(address => uint256)) public allowance;
 
     event Transfer(address indexed from, address indexed to, uint256 value);
 
@@ -33,5 +34,12 @@ contract Token {
         balanceOf[_to] = balanceOf[_to].add(_value);
         emit Transfer(msg.sender, _to, _value);
         return true;
+    }
+
+    function approve(address _spender, uint256 _value)
+        public
+        returns (bool success)
+    {
+        allowance[msg.sender][_spender] = _value;
     }
 }
