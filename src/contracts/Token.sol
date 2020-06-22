@@ -14,6 +14,11 @@ contract Token {
     mapping(address => mapping(address => uint256)) public allowance;
 
     event Transfer(address indexed from, address indexed to, uint256 value);
+    event Approval(
+        address indexed owner,
+        address indexed spender,
+        uint256 value
+    );
 
     constructor() public {
         totalSupply = 1000000 * (10**decimals);
@@ -41,6 +46,7 @@ contract Token {
         returns (bool success)
     {
         allowance[msg.sender][_spender] = _value;
+        emit Approval(msg.sender, _spender, _value);
         return true;
     }
 }
