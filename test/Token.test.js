@@ -153,16 +153,17 @@ contract("Token", ([deployer, receiver, exchange]) => {
         balanceOf = await token.balanceOf(receiver);
         balanceOf.toString().should.equal(tokens(100).toString());
       });
-      // it("emits a Transfer event", async () => {
-      //   const log = result.logs[0];
-      //   log.event.should.equal("Transfer");
-      //   const event = log.args;
-      //   event.from.toString().should.equal(deployer, "from is correct");
-      //   event.to.toString().should.equal(receiver, "to is correct");
-      //   event.value
-      //     .toString()
-      //     .should.equal(amount.toString(), "value is correct");
-      // });
+
+      it("emits a Transfer event", async () => {
+        const log = result.logs[0];
+        log.event.should.equal("Transfer");
+        const event = log.args;
+        event.from.toString().should.equal(deployer, "from is correct");
+        event.to.toString().should.equal(receiver, "to is correct");
+        event.value
+          .toString()
+          .should.equal(amount.toString(), "value is correct");
+      });
     });
 
     // describe("failure", async () => {
