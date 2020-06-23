@@ -131,7 +131,7 @@ contract("Token", ([deployer, receiver, exchange]) => {
     });
   });
 
-  describe("transferFrom", () => {
+  describe("delegate token transfers", () => {
     let amount, result;
 
     beforeEach(async () => {
@@ -171,24 +171,18 @@ contract("Token", ([deployer, receiver, exchange]) => {
       });
     });
 
-    // describe("failure", async () => {
-    //   it("rejects insufficient balances", async () => {
-    //     let invalidAmount = tokens(100000000);
-    //     await token
-    //       .transfer(receiver, invalidAmount, { from: deployer })
-    //       .should.be.rejectedWith(EVM_REVERT);
+    describe("failure", async () => {
+      it("rejects insufficient balances", async () => {
+        let invalidAmount = tokens(100000000);
+        await token
+          .transferFrom(deployer, receiver, invalidAmount, { from: exchange })
+          .should.be.rejectedWith(EVM_REVERT);
+      });
 
-    //     // Reject transfer since receiver has no tokens to send
-    //     invalidAmount = tokens(100);
-    //     await token
-    //       .transfer(deployer, invalidAmount, { from: receiver })
-    //       .should.be.rejectedWith(EVM_REVERT);
-    //   });
-
-    //   it("rejects invalid recipients", async () => {
-    //     await token.transfer(0x0, amount, { from: deployer }).should.be
-    //       .rejected;
-    //   });
-    // });
+      it("rejects invalid recipients", async () => {
+        await token.transferFrom(deployer, 0x0, amount, { from: exchange })
+          .should.be.rejected;
+      });
+    });
   });
 });
