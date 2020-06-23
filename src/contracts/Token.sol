@@ -29,7 +29,10 @@ contract Token {
         public
         returns (bool success)
     {
-        require(_to != address(0), "Recipient address is invalid");
+        require(
+            balanceOf[msg.sender] >= _value,
+            "Sender has insufficient funds"
+        );
         _transfer(msg.sender, _to, _value);
         return true;
     }
@@ -39,10 +42,7 @@ contract Token {
         address _to,
         uint256 _value
     ) internal returns (bool success) {
-        require(
-            balanceOf[msg.sender] >= _value,
-            "Sender has insufficient funds"
-        );
+        require(_to != address(0), "Recipient address is invalid");
 
         balanceOf[_from] = balanceOf[_from].sub(_value);
         balanceOf[_to] = balanceOf[_to].add(_value);
@@ -64,6 +64,7 @@ contract Token {
         address _to,
         uint256 _value
     ) public returns (bool success) {
+        _transfer(_from, _to, _value);
         return true;
     }
 }

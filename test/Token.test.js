@@ -130,4 +130,59 @@ contract("Token", ([deployer, receiver, exchange]) => {
       });
     });
   });
+
+  describe("transferFrom", () => {
+    let amount, result;
+
+    beforeEach(async () => {
+      amount = tokens(100);
+      result = await token.approve(exchange, amount, { from: deployer });
+    });
+
+    describe("success", async () => {
+      beforeEach(async () => {
+        result = await token.transferFrom(deployer, receiver, amount, {
+          from: exchange,
+        });
+      });
+
+      it("transfers token balances", async () => {
+        let balanceOf;
+        balanceOf = await token.balanceOf(deployer);
+        balanceOf.toString().should.equal(tokens(999900).toString());
+        balanceOf = await token.balanceOf(receiver);
+        balanceOf.toString().should.equal(tokens(100).toString());
+      });
+      // it("emits a Transfer event", async () => {
+      //   const log = result.logs[0];
+      //   log.event.should.equal("Transfer");
+      //   const event = log.args;
+      //   event.from.toString().should.equal(deployer, "from is correct");
+      //   event.to.toString().should.equal(receiver, "to is correct");
+      //   event.value
+      //     .toString()
+      //     .should.equal(amount.toString(), "value is correct");
+      // });
+    });
+
+    // describe("failure", async () => {
+    //   it("rejects insufficient balances", async () => {
+    //     let invalidAmount = tokens(100000000);
+    //     await token
+    //       .transfer(receiver, invalidAmount, { from: deployer })
+    //       .should.be.rejectedWith(EVM_REVERT);
+
+    //     // Reject transfer since receiver has no tokens to send
+    //     invalidAmount = tokens(100);
+    //     await token
+    //       .transfer(deployer, invalidAmount, { from: receiver })
+    //       .should.be.rejectedWith(EVM_REVERT);
+    //   });
+
+    //   it("rejects invalid recipients", async () => {
+    //     await token.transfer(0x0, amount, { from: deployer }).should.be
+    //       .rejected;
+    //   });
+    // });
+  });
 });
