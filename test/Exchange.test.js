@@ -47,7 +47,12 @@ contract("Exchange", ([deployer, feeAccount, user1]) => {
 
       it("tracks the token deposit", async () => {
         let balance;
+        // check exchange's token balance
         balance = await token.balanceOf(exchange.address);
+        balance.toString().should.equal(amount.toString());
+
+        // check token balance on exchange
+        balance = await exchange.tokens(token.address, user1);
         balance.toString().should.equal(amount.toString());
       });
     });
