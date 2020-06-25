@@ -32,7 +32,7 @@ contract("Exchange", ([deployer, feeAccount, user1]) => {
 
   describe("depositing tokens", () => {
     describe("success", () => {
-      let result, amount;
+      let result, amount, balance;
 
       beforeEach(async () => {
         amount = tokens(10);
@@ -46,7 +46,6 @@ contract("Exchange", ([deployer, feeAccount, user1]) => {
       });
 
       it("tracks the token deposit", async () => {
-        let balance;
         // check exchange's token balance
         balance = await token.balanceOf(exchange.address);
         balance.toString().should.equal(amount.toString());
@@ -54,6 +53,20 @@ contract("Exchange", ([deployer, feeAccount, user1]) => {
         // check token balance on exchange
         balance = await exchange.tokens(token.address, user1);
         balance.toString().should.equal(amount.toString());
+      });
+
+      it("emits a Deposit event", async () => {
+        const log = result.logs[0];
+        log.event.should.equal("Deposit");
+        const event = log.args;
+        event.token.should.equal(token.address, "token is not correct");
+        event.user.toString().should.equal(user1, "user is not correct");
+        event.amount
+          .toString()
+          .should.equal(amount.toString(), "amount is not correct");
+        event.balance
+          .toString()
+          .should.equal(balance.toString(), "balance is not correct");
       });
     });
 
