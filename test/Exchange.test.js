@@ -72,9 +72,11 @@ contract("Exchange", ([deployer, feeAccount, user1]) => {
 
     describe("failure", () => {
       it("rejects unapproved transfers", async () => {
-        await exchange.depositToken(token.address, amount, {
-          from: deployer,
-        }).should.be.rejected;
+        await exchange
+          .depositToken(token.address, tokens(10), {
+            from: user1,
+          })
+          .should.be.rejectedWith(EVM_REVERT);
       });
     });
   });
