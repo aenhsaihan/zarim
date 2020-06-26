@@ -10,7 +10,6 @@ contract Exchange {
     uint256 public feePercent;
     address constant ETHER = address(0); // store ether in tokens mapping with blank address
 
-    // mapping(address => uint256) public balances;
     mapping(address => mapping(address => uint256)) public tokens;
 
     event Deposit(address token, address user, uint256 amount, uint256 balance);
