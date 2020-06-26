@@ -30,6 +30,14 @@ contract("Exchange", ([deployer, feeAccount, user1]) => {
     });
   });
 
+  describe("fallback", () => {
+    it("reverts when ether is sent", async () => {
+      await exchange
+        .sendTransaction({ from: user1, value: ether(1) })
+        .should.be.rejectedWith(EVM_REVERT);
+    });
+  });
+
   describe("depositing ether", () => {
     let result, amount, balance;
 
