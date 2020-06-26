@@ -30,6 +30,49 @@ contract("Exchange", ([deployer, feeAccount, user1]) => {
     });
   });
 
+  describe("depositing ether", () => {
+    let result, amount, balance;
+
+    beforeEach(async () => {
+      amount = ether(1);
+      result = await exchange.depositEther({
+        from: user1,
+        value: amount,
+      });
+    });
+
+    describe("success", async () => {
+      it("tracks ether deposit", async () => {
+        balance = await exchange.tokens(ETHER_ADDRESS, user1);
+        balance.toString().should.equal(amount.toString());
+      });
+
+      it("emits a Deposit event", async () => {
+        const log = result.logs[0];
+        log.event.should.equal("Deposit");
+        const event = log.args;
+        event.token.should.equal(ETHER_ADDRESS, "token is not correct");
+        event.user.toString().should.equal(user1, "user is not correct");
+        event.amount
+          .toString()
+          .should.equal(amount.toString(), "amount is not correct");
+        event.balance
+          .toString()
+          .should.equal(balance.toString(), "balance is not correct");
+      });
+    });
+
+    describe("failure", async () => {
+      it.skip("should reject incorrect deposit", async () => {
+        await exchange
+          .depositEther(amount, {
+            from: user1,
+          })
+          .should.be.rejectedWith(EVM_REVERT);
+      });
+    });
+  });
+
   describe("depositing tokens", () => {
     describe("success", () => {
       let result, amount, balance;
@@ -83,49 +126,6 @@ contract("Exchange", ([deployer, feeAccount, user1]) => {
       it("rejects unapproved transfers", async () => {
         await exchange
           .depositToken(token.address, tokens(10), {
-            from: user1,
-          })
-          .should.be.rejectedWith(EVM_REVERT);
-      });
-    });
-  });
-
-  describe("depositing ether", () => {
-    let result, amount, balance;
-
-    beforeEach(async () => {
-      amount = ether(1);
-      result = await exchange.depositEther({
-        from: user1,
-        value: amount,
-      });
-    });
-
-    describe("success", async () => {
-      it("tracks ether deposit", async () => {
-        balance = await exchange.tokens(ETHER_ADDRESS, user1);
-        balance.toString().should.equal(amount.toString());
-      });
-
-      it("emits a Deposit event", async () => {
-        const log = result.logs[0];
-        log.event.should.equal("Deposit");
-        const event = log.args;
-        event.token.should.equal(ETHER_ADDRESS, "token is not correct");
-        event.user.toString().should.equal(user1, "user is not correct");
-        event.amount
-          .toString()
-          .should.equal(amount.toString(), "amount is not correct");
-        event.balance
-          .toString()
-          .should.equal(balance.toString(), "balance is not correct");
-      });
-    });
-
-    describe("failure", async () => {
-      it.skip("should reject incorrect deposit", async () => {
-        await exchange
-          .depositEther(amount, {
             from: user1,
           })
           .should.be.rejectedWith(EVM_REVERT);
