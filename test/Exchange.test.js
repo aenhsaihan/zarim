@@ -10,6 +10,7 @@ require("chai")
 contract("Exchange", ([deployer, feeAccount, user1]) => {
   let exchange, token, amount;
   const feePercent = 10;
+  const ETHER_ADDRESS = "0x0000000000000000000000000000000000000000";
 
   beforeEach(async () => {
     token = await Token.new();
@@ -71,9 +72,47 @@ contract("Exchange", ([deployer, feeAccount, user1]) => {
     });
 
     describe("failure", () => {
+      it("rejects ether deposits", async () => {
+        await exchange
+          .depositToken(ETHER_ADDRESS, tokens(10), {
+            from: user1,
+            value: tokens(10),
+          })
+          .should.be.rejectedWith(EVM_REVERT);
+      });
+
       it("rejects unapproved transfers", async () => {
         await exchange
           .depositToken(token.address, tokens(10), {
+            from: user1,
+          })
+          .should.be.rejectedWith(EVM_REVERT);
+      });
+    });
+  });
+
+  describe("depositing ether", () => {
+    let result, amount, balance;
+
+    beforeEach(async () => {
+      amount = tokens(10);
+      result = await exchange.depositEther({
+        from: user1,
+        value: amount,
+      });
+    });
+
+    describe("success", async () => {
+      it("deposits ether", async () => {
+        balance = await exchange.tokens(ETHER_ADDRESS, user1);
+        balance.toString().should.equal(amount.toString());
+      });
+    });
+
+    describe("failure", async () => {
+      it.skip("should reject incorrect deposit", async () => {
+        await exchange
+          .depositEther(amount, {
             from: user1,
           })
           .should.be.rejectedWith(EVM_REVERT);
