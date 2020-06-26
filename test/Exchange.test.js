@@ -1,4 +1,4 @@
-import { tokens, EVM_REVERT } from "./helpers";
+import { tokens, EVM_REVERT, ETHER_ADDRESS } from "./helpers";
 
 const Exchange = artifacts.require("./Exchange");
 const Token = artifacts.require("./Token");
@@ -10,7 +10,6 @@ require("chai")
 contract("Exchange", ([deployer, feeAccount, user1]) => {
   let exchange, token, amount;
   const feePercent = 10;
-  const ETHER_ADDRESS = "0x0000000000000000000000000000000000000000";
 
   beforeEach(async () => {
     token = await Token.new();
